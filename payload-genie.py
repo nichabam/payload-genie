@@ -5,6 +5,7 @@ from pathlib import Path
 PAYLOADS_PATH = Path(__file__).with_name("payloads.json")
 LHOST_TOKEN = "{{LHOST}}"
 LPORT_TOKEN = "{{LPORT}}"
+PAYLOAD_TOKEN = "{{PAYLOAD}}"
 
 
 def load_payloads(path=PAYLOADS_PATH):
@@ -34,6 +35,12 @@ def encode_payload(payload, encode=None):
     return payload
 
 
+def wrap_payload(payload, wrap=None):
+    if not wrap:
+        return payload
+    return wrap.replace(PAYLOAD_TOKEN, payload)
+
+
 def choose_option(options, prompt="Enter option number: "):
     for index, label in enumerate(options, start=1):
         print(f"{index}. {label}")
@@ -50,6 +57,7 @@ def generate_payload(entry):
     ip, port = get_target()
     payload = inject(entry["template"], ip, port)
     payload = encode_payload(payload, entry.get("encode"))
+    payload = wrap_payload(payload, entry.get("wrap"))
     print(f"Generating {entry['name']}...")
     print_payload(payload)
 
